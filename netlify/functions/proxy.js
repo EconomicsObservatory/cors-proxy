@@ -42,24 +42,36 @@ module.exports.handler = async (event, context) => {
   try {
     // Forward the request to the target URL
     const response = await fetch(targetURL);
-    const data = await response.text();
+    const contentType = response.headers.get('content-type');
+    
+    // Parse response based on content type
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      data = await response.text();
+    }
 
     // Return the response with CORS headers
     return {
-      statusCode: 200,
+      statusCode: response.status,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET',
-        'Content-Type': response.headers.get('content-type')
+        'Content-Type': contentType || 'text/plain'
       },
-      body: data
+      body: typeof data === 'string' ? data : JSON.stringify(data)
     };
 
   } catch (error) {
+    console.error('Proxy error:', error);
     return {
       statusCode: 500,
-      body: `Error: ${error.message}`
+      body: JSON.stringify({
+        error: error.message,
+        url: targetURL
+      })
     };
   }
 };

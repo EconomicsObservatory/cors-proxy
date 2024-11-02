@@ -12,38 +12,45 @@ https://eco-cors-proxy.netlify.app/proxy?url=YOUR_ENCODED_URL
 
 ## Examples
 
-### Direct ONS API Calls
+### Direct Legacy ONS API Calls (should return decommissioned message)
 
 1. CPI Annual Rate (d7g7):
 ```
-https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/datasets/mm23/editions/time-series/versions/2
+https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data
+```
+
+### Direct New ONS API Calls
+
+1. CPI Annual Rate (d7g7):
+```
+https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23
 ```
 
 2. GDP Quarter on Quarter Growth (l55o):
 ```
-https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/datasets/pn2/editions/time-series/versions/2
+https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23
 ```
 
 3. Unemployment Rate (mgsx):
 ```
-https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/datasets/lms/editions/time-series/versions/2
+https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms
 ```
 
-### Economics Observatory API Calls
+### Economics Observatory ONS API Calls
 
-1. CPI Annual Rate via EO API:
+1. CPI Annual Rate via ECO ONS API:
 ```
 https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true
 ```
 
-2. GDP Growth via EO API:
+2. GDP Growth via ECO ONS API:
 ```
-https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/l55o/dataset/pn2/data&format=json&data_only=true
+https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true
 ```
 
-3. Unemployment Rate via EO API:
+3. Unemployment Rate via ECO ONS API:
 ```
-https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/mgsx/dataset/lms/data&format=json&data_only=true
+https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true
 ```
 
 ## Using with Vega-Lite
@@ -55,7 +62,7 @@ Here's an example of how to use the proxy with Vega-Lite:
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "CPI Annual Rate",
   "data": {
-    "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true",
+    "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=d7g7&format=json&data_only=true",
     "format": {
       "type": "json",
       "property": "months"
