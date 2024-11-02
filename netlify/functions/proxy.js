@@ -45,11 +45,21 @@ module.exports.handler = async (event, context) => {
     const contentType = response.headers.get('content-type');
     
     // Parse response based on content type
-    let data;
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      data = await response.text();
+    let data = await response.text();
+
+    // If the response is HTML containing JSON data (Economics Observatory API case)
+    if (contentType && contentType.includes('text/html')) {
+      try {
+        // Find JSON content within the HTML
+        const jsonMatch = data.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          data = JSON.parse(jsonMatch[0]);
+        }
+      } catch (parseError) {
+        console.error('JSON parsing error:', parseError);
+      }
+    } else if (contentType && contentType.includes('application/json')) {
+      data = JSON.parse(data);
     }
 
     // Return the response with CORS headers
@@ -59,7 +69,7 @@ module.exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET',
-        'Content-Type': contentType || 'text/plain'
+        'Content-Type': 'application/json'
       },
       body: typeof data === 'string' ? data : JSON.stringify(data)
     };

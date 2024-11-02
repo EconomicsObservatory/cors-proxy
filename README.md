@@ -36,19 +36,19 @@ https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data
 https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms
 ```
 
-### Economics Observatory ONS API Calls
+### Economics Observatory ONS API Converter Calls
 
-1. CPI Annual Rate via ECO ONS API:
+1. CPI Annual Rate via ECO ONS API Converter:
 ```
 https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true
 ```
 
-2. GDP Growth via ECO ONS API:
+2. GDP Growth via ECO ONS API Converter:
 ```
 https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true
 ```
 
-3. Unemployment Rate via ECO ONS API:
+3. Unemployment Rate via ECO ONS API Converter:
 ```
 https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true
 ```
