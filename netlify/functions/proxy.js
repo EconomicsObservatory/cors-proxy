@@ -1,85 +1,76 @@
 const fetch = require('node-fetch');
 
-// Simple in-memory rate limiting
-const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 60; // 60 requests per minute
-const requestLog = new Map();
-
-// Changed from exports.handler to module.exports.handler
-module.exports.handler = async (event, context) => {
-  // Rate limiting check
-  const clientIP = event.headers['client-ip'];
-  const now = Date.now();
-  const clientRequests = requestLog.get(clientIP) || [];
-  const recentRequests = clientRequests.filter(time => now - time < RATE_LIMIT_WINDOW);
-  
-  if (recentRequests.length >= MAX_REQUESTS_PER_WINDOW) {
-    return {
-      statusCode: 429,
-      body: 'Too Many Requests'
-    };
-  }
-  
-  requestLog.set(clientIP, [...recentRequests, now]);
-
-  // Only allow GET requests
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed'
-    };
-  }
-
-  // Get the target URL from the querystring
+async function handler(event) {
   const targetURL = event.queryStringParameters.url;
+  
   if (!targetURL) {
     return {
       statusCode: 400,
-      body: 'Missing target URL parameter'
+      body: JSON.stringify({ error: 'URL parameter is required' })
     };
   }
 
   try {
-    // First request to get the page
+    console.log('Initial request to:', targetURL);
+    // First request to initiate the conversion
+    const initialResponse = await fetch(targetURL);
+    console.log('Initial response status:', initialResponse.status);
+    
+    // Wait for the conversion to complete
+    console.log('Waiting for conversion...');
+    await new Promise(resolve => setTimeout(resolve, 3000)); // Increased to 3 seconds
+    
+    // Second request to get the converted data
+    console.log('Making second request...');
     const response = await fetch(targetURL);
     const contentType = response.headers.get('content-type');
     let data = await response.text();
+    
+    console.log('Response content type:', contentType);
 
     // If it's the Economics Observatory API response
     if (contentType && contentType.includes('text/html')) {
       try {
-        // First try to find JSON in a <pre> tag
-        let jsonMatch = data.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i);
+        // Extract the CDID from the URL
+        const urlObj = new URL(targetURL);
+        const code = urlObj.searchParams.get('code');
         
-        if (jsonMatch && jsonMatch[1]) {
-          // Clean up any HTML entities and whitespace
-          const cleanJson = jsonMatch[1]
-            .replace(/&quot;/g, '"')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .trim();
-          
-          data = JSON.parse(cleanJson);
-        } else {
-          // If no <pre> tag, try to find JSON content directly
-          jsonMatch = data.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
-          if (jsonMatch && jsonMatch[1]) {
-            data = JSON.parse(jsonMatch[1].trim());
-          } else {
-            throw new Error('No JSON data found in response');
-          }
+        if (!code) {
+          throw new Error('No CDID code found in URL');
+        }
+
+        // Construct the direct beta ONS API URLs
+        const searchUrl = `https://api.beta.ons.gov.uk/v1/search?content_type=timeseries&cdids=${code}`;
+        console.log('Fetching from search URL:', searchUrl);
+        
+        const searchResponse = await fetch(searchUrl);
+        const searchData = await searchResponse.json();
+
+        if (!searchData.items?.length) {
+          throw new Error('Timeseries not found');
+        }
+
+        const item = searchData.items[0];
+        const uri = item.uri;
+
+        // Fetch the actual data
+        const dataUrl = `https://api.beta.ons.gov.uk/v1/data?uri=${uri}`;
+        console.log('Fetching from data URL:', dataUrl);
+        
+        const dataResponse = await fetch(dataUrl);
+        data = await dataResponse.json();
+
+        // If data_only is specified, return only the data
+        if (urlObj.searchParams.get('data_only') === 'true') {
+          data = data.observations || data;
         }
       } catch (parseError) {
-        console.error('JSON parsing error:', parseError);
+        console.error('Data fetching error:', parseError);
         return {
           statusCode: 422,
           body: JSON.stringify({
-            error: 'Failed to parse JSON from HTML response',
-            details: parseError.message,
-            // Add debug info
-            contentType: contentType,
-            dataPreview: data.substring(0, 200) // First 200 chars for debugging
+            error: 'Failed to fetch data',
+            details: parseError.message
           })
         };
       }
@@ -102,8 +93,11 @@ module.exports.handler = async (event, context) => {
       statusCode: 500,
       body: JSON.stringify({
         error: error.message,
-        url: targetURL
+        url: targetURL,
+        stack: error.stack
       })
     };
   }
-};
+}
+
+exports.handler = handler;
