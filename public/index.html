@@ -184,7 +184,7 @@
         </div>
 
         <div class="input-box">
-            <h2>URL Converter</h2>
+            <h2>CORS Proxy URL Converter</h2>
             <input type="text" 
                    id="input" 
                    placeholder="Enter URL to proxy (e.g., https://api.example.com/data)"
@@ -198,7 +198,7 @@
 
         <div class="tutorial">
             <h3>About</h3>
-            <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs. It enables cross-origin requests for applications that need to access these data sources.</p>
+            <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs (and it should work for others too, though untested). It enables cross-origin requests for applications that need to access these data sources.</p>
         </div>
 
         <div class="tutorial">
@@ -210,43 +210,64 @@
         <div class="tutorial">
             <h3>Example API Calls</h3>
 
+            <br>
             <h4>Direct Legacy ONS API Calls (should return decommissioned message)</h4>
             <div class="example-box">
                 <h5>CPI Annual Rate (d7g7):</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data">https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data</a></code>
             </div>
 
+            <br><br>
             <h4>Direct New ONS API Calls</h4>
             <div class="example-box">
                 <h5>CPI Annual Rate (d7g7):</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23</a></code>
             </div>
 
             <div class="example-box">
                 <h5>GDP Quarter on Quarter Growth (l55o):</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23</a></code>
             </div>
 
             <div class="example-box">
                 <h5>Unemployment Rate (mgsx):</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms</a></code>
             </div>
 
+            <br><br>
             <h4>Economics Observatory ONS API Converter</h4>
             <div class="example-box">
                 <h5>CPI Annual Rate:</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true</a></code>
             </div>
 
             <div class="example-box">
                 <h5>GDP Growth:</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true</a></code>
             </div>
 
             <div class="example-box">
                 <h5>Unemployment Rate:</h5>
-                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true</a></code>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true</a></code>
             </div>
+
+            <br><br>
+            <h4>CoinDesk API Examples</h4>
+            <div class="example-box">
+                <h5>Bitcoin Current Price Index (USD, GBP, EUR):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json</a></code>
+            </div>
+
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Data provided by CoinDesk's Bitcoin Price Index. Updates every minute with current BTC prices in USD, GBP, and EUR.</p>
+
+            <br><br>
+            <h4>Coinbase API Examples</h4>
+            <div class="example-box">
+                <h5>Exchange Rates (USD base):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.coinbase.com/v2/exchange-rates?currency=USD" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.coinbase.com/v2/exchange-rates?currency=USD</a></code>
+            </div>
+
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Returns current exchange rates for USD against all supported fiat currencies and cryptocurrencies on Coinbase. Updates frequently throughout the day.</p>
         </div>
 
         <div class="tutorial">
@@ -275,8 +296,8 @@
         </div>
 
         <footer>
-            <p>Built by <a href="https://www.economicsobservatory.com">Economics Observatory</a> | 
-               <a href="https://github.com/EconomicsObservatory">GitHub</a></p>
+            <p>Built by <a href="https://www.economicsobservatory.com" target="_blank" rel="noopener noreferrer">Economics Observatory</a> | 
+               <a href="https://github.com/EconomicsObservatory" target="_blank" rel="noopener noreferrer">GitHub</a></p>
         </footer>
     </div>
 
