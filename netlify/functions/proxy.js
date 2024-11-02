@@ -18,7 +18,7 @@ async function handler(event) {
     
     // Wait for the conversion to complete
     console.log('Waiting for conversion...');
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Increased to 3 seconds
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced to 1 second
     
     // Second request to get the converted data
     console.log('Making second request...');
