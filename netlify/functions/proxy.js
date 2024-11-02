@@ -48,16 +48,27 @@ module.exports.handler = async (event, context) => {
     // If it's the Economics Observatory API response
     if (contentType && contentType.includes('text/html')) {
       try {
-        // Look for JSON data in a script tag or pre-formatted content
-        const jsonMatch = data.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i) || 
-                         data.match(/\{[\s\S]*\}/);
+        // First try to find JSON in a <pre> tag
+        let jsonMatch = data.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i);
         
-        if (jsonMatch) {
-          // Get the content from the match (either group 1 for pre tag or group 0 for direct JSON)
-          const jsonContent = jsonMatch[1] || jsonMatch[0];
-          data = JSON.parse(jsonContent.trim());
+        if (jsonMatch && jsonMatch[1]) {
+          // Clean up any HTML entities and whitespace
+          const cleanJson = jsonMatch[1]
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .trim();
+          
+          data = JSON.parse(cleanJson);
         } else {
-          throw new Error('No JSON data found in response');
+          // If no <pre> tag, try to find JSON content directly
+          jsonMatch = data.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+          if (jsonMatch && jsonMatch[1]) {
+            data = JSON.parse(jsonMatch[1].trim());
+          } else {
+            throw new Error('No JSON data found in response');
+          }
         }
       } catch (parseError) {
         console.error('JSON parsing error:', parseError);
@@ -65,7 +76,10 @@ module.exports.handler = async (event, context) => {
           statusCode: 422,
           body: JSON.stringify({
             error: 'Failed to parse JSON from HTML response',
-            details: parseError.message
+            details: parseError.message,
+            // Add debug info
+            contentType: contentType,
+            dataPreview: data.substring(0, 200) // First 200 chars for debugging
           })
         };
       }
