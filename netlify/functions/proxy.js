@@ -40,31 +40,39 @@ module.exports.handler = async (event, context) => {
   }
 
   try {
-    // Forward the request to the target URL
+    // First request to get the page
     const response = await fetch(targetURL);
     const contentType = response.headers.get('content-type');
-    
-    // Parse response based on content type
     let data = await response.text();
 
-    // If the response is HTML containing JSON data (Economics Observatory API case)
+    // If it's the Economics Observatory API response
     if (contentType && contentType.includes('text/html')) {
       try {
-        // Find JSON content within the HTML
-        const jsonMatch = data.match(/\{[\s\S]*\}/);
+        // Look for JSON data in a script tag or pre-formatted content
+        const jsonMatch = data.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i) || 
+                         data.match(/\{[\s\S]*\}/);
+        
         if (jsonMatch) {
-          data = JSON.parse(jsonMatch[0]);
+          // Get the content from the match (either group 1 for pre tag or group 0 for direct JSON)
+          const jsonContent = jsonMatch[1] || jsonMatch[0];
+          data = JSON.parse(jsonContent.trim());
+        } else {
+          throw new Error('No JSON data found in response');
         }
       } catch (parseError) {
         console.error('JSON parsing error:', parseError);
+        return {
+          statusCode: 422,
+          body: JSON.stringify({
+            error: 'Failed to parse JSON from HTML response',
+            details: parseError.message
+          })
+        };
       }
-    } else if (contentType && contentType.includes('application/json')) {
-      data = JSON.parse(data);
     }
 
-    // Return the response with CORS headers
     return {
-      statusCode: response.status,
+      statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
