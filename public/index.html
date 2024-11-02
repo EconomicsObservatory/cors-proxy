@@ -3,132 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Economic Observatory CORS Proxy</title>
-    <link rel="icon" type="image/png" href="https://www.economicsobservatory.com/themes/custom/economics_observatory/favicon.ico">
+    <title>CORS Proxy | Economics Observatory</title>
     <style>
+        /* ECO colors from styleguide */
         :root {
-            --eco-blue: #2C3192;
-            --eco-light-blue: #009FE3;
+            --eco-dot: #F4134D;
+            --eco-bg: #122B39;
+            --eco-gray: #676A86;
+            --eco-turquoise: #36B7B4;
         }
+
         body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--eco-bg);
+            font-family: 'Work Sans', sans-serif;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .tutorial {
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
-            color: #333;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+            max-width: 1000px;
+            width: 100%;
         }
-        .header {
-            border-bottom: 2px solid var(--eco-blue);
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
+
+        .tutorial h3 {
+            color: var(--eco-turquoise);
+            margin-bottom: 15px;
         }
-        .header img {
-            height: 50px;
-        }
-        h1, h2, h3 {
-            color: var(--eco-blue);
-            font-weight: 500;
-        }
-        .example-box {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
+
+        .tutorial code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 6px;
             border-radius: 4px;
-            padding: 1rem;
-            margin: 1rem 0;
+            font-family: monospace;
+            color: var(--eco-turquoise);
         }
-        code {
-            background: #e9ecef;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.9em;
-            word-break: break-all;
+
+        .tutorial a {
+            color: var(--eco-turquoise);
+            text-decoration: none;
         }
+
+        .tutorial a:hover {
+            color: var(--eco-dot);
+        }
+
         pre {
-            background: #f8f9fa;
-            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
             border-radius: 4px;
             overflow-x: auto;
-            border: 1px solid #e9ecef;
+            color: var(--eco-turquoise);
         }
-        .github-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: var(--eco-blue);
-            font-weight: 500;
-        }
-        .github-link:hover {
-            color: var(--eco-light-blue);
-        }
-        .footer {
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 2px solid var(--eco-blue);
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: var(--eco-gray);
+            font-size: 14px;
             text-align: center;
+        }
+
+        footer a {
+            color: var(--eco-turquoise);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--eco-dot);
+        }
+
+        .input-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--eco-turquoise);
+            border-radius: 4px;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--eco-dot);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .title {
+            color: white;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .api-url {
+            color: var(--eco-turquoise);
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .api-url:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .api-url::after {
+            content: 'Click to copy';
+            position: absolute;
+            top: -20px;
+            right: 0;
+            font-size: 12px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .api-url:hover::after {
+            opacity: 1;
+        }
+
+        .api-url.copied::after {
+            content: 'Copied!';
+            color: var(--eco-turquoise);
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="https://www.economicsobservatory.com/themes/custom/economics_observatory/logo.svg" alt="Economics Observatory Logo">
-        <h1>Economic Observatory CORS Proxy</h1>
+    <div class="container">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/EconomicsObservatory/ECOvisualisations/main/guidelines/logos/eco-logo-dark.png" 
+                 alt="Economics Observatory" 
+                 height="80"
+                 style="cursor: pointer"
+                 onclick="window.location.href = window.location.pathname">
+        </div>
+
+        <div class="input-box">
+            <h2>URL Converter</h2>
+            <input type="text" 
+                   id="input" 
+                   placeholder="Enter URL to proxy (e.g., https://api.example.com/data)"
+                   autocomplete="off">
+            
+            <div class="result" id="result">
+                <div class="title" id="urlTitle">Proxied URL:</div>
+                <div class="api-url" id="proxyUrl"></div>
+            </div>
+        </div>
+
+        <div class="tutorial">
+            <h3>About</h3>
+            <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs. It enables cross-origin requests for applications that need to access these data sources.</p>
+        </div>
+
+        <div class="tutorial">
+            <h3>Usage</h3>
+            <p>To use the proxy, prefix your target URL with our proxy endpoint:</p>
+            <pre>https://eco-cors-proxy.netlify.app/proxy?url=YOUR_TARGET_URL</pre>
+        </div>
+
+        <div class="tutorial">
+            <h3>Example API Calls</h3>
+
+            <h4>Direct Legacy ONS API Calls (should return decommissioned message)</h4>
+            <div class="example-box">
+                <h5>CPI Annual Rate (d7g7):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data">https://eco-cors-proxy.netlify.app/proxy?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data</a></code>
+            </div>
+
+            <h4>Direct New ONS API Calls</h4>
+            <div class="example-box">
+                <h5>CPI Annual Rate (d7g7):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/d7g7/mm23</a></code>
+            </div>
+
+            <div class="example-box">
+                <h5>GDP Quarter on Quarter Growth (l55o):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/economy/inflationandpriceindices/timeseries/l55o/mm23</a></code>
+            </div>
+
+            <div class="example-box">
+                <h5>Unemployment Rate (mgsx):</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms">https://eco-cors-proxy.netlify.app/proxy?url=https://api.beta.ons.gov.uk/v1/data?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms</a></code>
+            </div>
+
+            <h4>Economics Observatory ONS API Converter</h4>
+            <div class="example-box">
+                <h5>CPI Annual Rate:</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true</a></code>
+            </div>
+
+            <div class="example-box">
+                <h5>GDP Growth:</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true</a></code>
+            </div>
+
+            <div class="example-box">
+                <h5>Unemployment Rate:</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true">https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true</a></code>
+            </div>
+        </div>
+
+        <div class="tutorial">
+            <h3>Limitations</h3>
+            <ul>
+                <li>Rate limited to 60 requests per minute per IP address</li>
+                <li>Only GET requests are supported</li>
+                <li>URL must be properly encoded</li>
+                <li>Response must be valid JSON</li>
+            </ul>
+        </div>
+
+        <div class="tutorial">
+            <h3>Response Format</h3>
+            <p>The proxy returns JSON responses with appropriate CORS headers. For <a href="https://economicsobservatory.github.io/api/ons.html">Economics Observatory API Converter</a> responses, the proxy will extract and parse the JSON data from the HTML response.</p>
+        </div>
+
+        <div class="tutorial">
+            <h3>Error Codes</h3>
+            <ul>
+                <li><code>400</code> - Missing target URL parameter</li>
+                <li><code>405</code> - Method not allowed (only GET requests are supported)</li>
+                <li><code>429</code> - Too many requests (rate limit exceeded)</li>
+                <li><code>500</code> - Server error</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Built by <a href="https://www.economicsobservatory.com">Economics Observatory</a> | 
+               <a href="https://github.com/EconomicsObservatory">GitHub</a></p>
+        </footer>
     </div>
 
-    <h2>About</h2>
-    <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs. It enables cross-origin requests for applications that need to access these data sources.</p>
+    <script>
+        const input = document.getElementById('input');
+        const result = document.getElementById('result');
+        const proxyUrl = document.getElementById('proxyUrl');
 
-    <h2>Usage</h2>
-    <p>To use the proxy, prefix your target URL with our proxy endpoint:</p>
-    <pre>https://eco-cors-proxy.netlify.app/proxy?url=YOUR_TARGET_URL</pre>
+        function generateProxyUrl(url) {
+            if (!url) {
+                result.style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Check if it's a valid URL
+                new URL(url);
+                
+                // Generate the proxied URL with the full domain
+                const proxiedUrl = `https://eco-cors-proxy.netlify.app/proxy?url=${url}`;
+                
+                // Show result
+                result.style.display = 'block';
+                proxyUrl.textContent = proxiedUrl;
+                proxyUrl.classList.remove('copied');
+            } catch (err) {
+                result.style.display = 'block';
+                proxyUrl.textContent = 'Please enter a valid URL';
+            }
+        }
 
-    <h2>Example API Calls</h2>
+        // Handle input changes
+        input.addEventListener('input', (e) => {
+            generateProxyUrl(e.target.value);
+        });
 
-    <h3>Economics Observatory ONS API Converter</h3>
-    
-    <div class="example-box">
-        <h4>CPI Annual Rate:</h4>
-        <code>https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?url=https://api.ons.gov.uk/timeseries/d7g7/dataset/mm23/data&format=json&data_only=true</code>
-    </div>
-
-    <div class="example-box">
-        <h4>GDP Growth:</h4>
-        <code>https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=l55o&format=json&data_only=true</code>
-    </div>
-
-    <div class="example-box">
-        <h4>Unemployment Rate:</h4>
-        <code>https://eco-cors-proxy.netlify.app/proxy?url=https://economicsobservatory.github.io/api/ons.html?code=mgsx&format=json&data_only=true</code>
-    </div>
-
-    <h2>Limitations</h2>
-    <ul>
-        <li>Rate limited to 60 requests per minute per IP address</li>
-        <li>Only GET requests are supported</li>
-        <li>URL must be properly encoded</li>
-        <li>Response must be valid JSON</li>
-    </ul>
-
-    <h2>Response Format</h2>
-    <p>The proxy returns JSON responses with appropriate CORS headers. For Economics Observatory API converter responses, the proxy will extract and parse the JSON data from the HTML response.</p>
-
-    <h2>Error Codes</h2>
-    <ul>
-        <li><code>400</code> - Missing target URL parameter</li>
-        <li><code>405</code> - Method not allowed (only GET requests are supported)</li>
-        <li><code>429</code> - Too many requests (rate limit exceeded)</li>
-        <li><code>500</code> - Server error</li>
-    </ul>
-
-    <div class="footer">
-        <a href="https://github.com/EconomicsObservatory/cors-proxy" class="github-link" target="_blank">
-            <svg height="20" width="20" viewBox="0 0 16 16">
-                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-            </svg>
-            View on GitHub
-        </a>
-        <p>Built and maintained by the Economics Observatory</p>
-    </div>
+        // Add click-to-copy functionality
+        proxyUrl.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(proxyUrl.textContent);
+                proxyUrl.classList.add('copied');
+                setTimeout(() => {
+                    proxyUrl.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        });
+    </script>
 </body>
 </html> 

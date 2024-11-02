@@ -31,10 +31,21 @@ async function handler(event) {
     // If it's the Economics Observatory API response
     if (contentType && contentType.includes('text/html')) {
       try {
-        // Extract the CDID from the URL
+        // Extract the CDID from the URL - check both formats
         const urlObj = new URL(targetURL);
-        const code = urlObj.searchParams.get('code');
+        let code = urlObj.searchParams.get('code');
         
+        // If no direct code parameter, try to extract from the full URL parameter
+        if (!code) {
+          const fullUrl = urlObj.searchParams.get('url');
+          if (fullUrl) {
+            const match = fullUrl.match(/timeseries\/([a-zA-Z0-9]{4})\/dataset/i);
+            if (match) {
+              code = match[1].toLowerCase();
+            }
+          }
+        }
+
         if (!code) {
           throw new Error('No CDID code found in URL');
         }
