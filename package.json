@@ -1,0 +1,11 @@
+{
+  "name": "cors-proxy",
+  "version": "1.0.0",
+  "description": "CORS proxy for Economics Observatory",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
