@@ -1,18 +1,12 @@
 {
   "name": "cors-proxy",
   "version": "1.0.0",
-  "description": "CORS proxy for Economics Observatory",
-  "dependencies": {
-    "node-fetch": "^2.7.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
+  "description": "A simple CORS proxy for the Economics Observatory",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dependencies": {
+    "node-fetch": "^2.6.9"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "dev": "netlify dev"
+  }
 }
