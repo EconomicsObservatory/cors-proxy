@@ -271,6 +271,85 @@
         </div>
 
         <div class="tutorial">
+            <h3>Vega-Lite Chart Example</h3>
+            <p>Here's an example of how to create a Vega chart using the CoinDesk API with our CORS proxy:</p>
+            <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;" onclick="copyToClipboard(this)">
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
+    "format": {
+      "type": "json",
+      "property": "bpi.USD.rate_float"
+    }
+  },
+  "mark": "bar",
+  "encoding": {
+    "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
+  }
+}</pre>
+            <p>You can use this specification in the <a href="https://vega.github.io/editor/" target="_blank">Vega Editor</a>. Note that:</p>
+            <ul>
+                <li>The CORS proxy is required to fetch data from the API</li>
+                <li>The data property path extracts just the USD price</li>
+                <li>The chart updates in real-time as Bitcoin prices change</li>
+            </ul>
+
+            <h4>Live Example (Current Bitcoin Price in USD):</h4>
+            <div id="vis"></div>
+            <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+            <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+            <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+            <script>
+                // Add copy-to-clipboard functionality
+                function copyToClipboard(element) {
+                    // The actual spec to copy (with unbroken URL)
+                    const spec = {
+                        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                        "data": {
+                            "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
+                            "format": {
+                                "type": "json",
+                                "property": "bpi.USD.rate_float"
+                            }
+                        },
+                        "mark": "bar",
+                        "encoding": {
+                            "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
+                        }
+                    };
+
+                    // Copy the stringified spec to clipboard
+                    navigator.clipboard.writeText(JSON.stringify(spec, null, 2))
+                        .then(() => {
+                            // Visual feedback
+                            element.style.backgroundColor = "rgba(54, 183, 180, 0.1)"; // Subtle flash of turquoise
+                            setTimeout(() => {
+                                element.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+                            }, 200);
+                        });
+                }
+
+                // Render the chart
+                const spec = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "data": {
+                        "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
+                        "format": {
+                            "type": "json",
+                            "property": "bpi.USD.rate_float"
+                        }
+                    },
+                    "mark": {"type":"bar", "color":"#36B7B4"},
+                    "encoding": {
+                        "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
+                    }
+                };
+                vegaEmbed('#vis', spec);
+            </script>
+        </div>
+
+        <div class="tutorial">
             <h3>Limitations</h3>
             <ul>
                 <li>Rate limited to 60 requests per minute per IP address</li>
@@ -282,7 +361,7 @@
 
         <div class="tutorial">
             <h3>Response Format</h3>
-            <p>The proxy returns JSON responses with appropriate CORS headers. For <a href="https://economicsobservatory.github.io/api/ons.html">Economics Observatory API Converter</a> responses, the proxy will extract and parse the JSON data from the HTML response.</p>
+            <p>The proxy returns JSON responses with appropriate CORS headers. For <a href="https://economicsobservatory.github.io/api/ons.html">Economics Observatory API Converter</a> responses, the proxy will try extract and parse the JSON data from the HTML response, and fall back onto proxying the ONS beta API as a a backup.</p>
         </div>
 
         <div class="tutorial">
@@ -296,7 +375,9 @@
         </div>
 
         <footer>
-            <p>Built by <a href="https://www.economicsobservatory.com" target="_blank" rel="noopener noreferrer">Economics Observatory</a> | 
+            <p>Built by <a href="https://www.csaladen.es" target="_blank">Denes</a> for the <a href="https://www.economicsobservatory.com" target="_blank" rel="noopener noreferrer">Economics Observatory</a> | 
+               <a href="https://economicsobservatory.github.io/api/ons.html" target="_blank" rel="noopener noreferrer">ECO ONS API</a> |
+               <a href="https://economicsobservatory.github.io/cors-proxy/" target="_blank" rel="noopener noreferrer">ECO CORS Proxy</a> |
                <a href="https://github.com/EconomicsObservatory" target="_blank" rel="noopener noreferrer">GitHub</a></p>
         </footer>
     </div>
