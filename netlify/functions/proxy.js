@@ -24,33 +24,42 @@ async function handler(event) {
     try {
       // For FRED API, ensure the URL is properly encoded
       if (targetURL.includes('api.stlouisfed.org')) {
-        const parsedUrl = new URL(targetURL);
-        const params = new URLSearchParams();
-        
-        console.log('FRED API URL parsing:');
-        console.log('Original URL:', targetURL);
-        console.log('Search params:', Array.from(parsedUrl.searchParams.entries()));
-        
-        // Check if api_key exists in the raw URL
-        const hasApiKeyInRawUrl = targetURL.includes('api_key=');
-        console.log('Has API key in raw URL:', hasApiKeyInRawUrl);
-        
-        // Get all parameters and add them to the new URLSearchParams
-        for (const [key, value] of parsedUrl.searchParams) {
-          console.log('Processing parameter:', key, value);
-          if (key === 'api_key') {
-            // Always use our API key for FRED requests
-            params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
-            console.log('Added API key parameter');
-          } else {
-            params.append(key, value);
-          }
+        let parsedUrl;
+        try {
+          // First try parsing as is
+          parsedUrl = new URL(targetURL);
+        } catch (e) {
+          // If parsing fails, try encoding the URL first
+          parsedUrl = new URL(encodeURI(targetURL));
         }
 
-        // If no api_key was found in parameters but exists in raw URL, add it
-        if (!parsedUrl.searchParams.has('api_key') && hasApiKeyInRawUrl) {
-          params.append('api_key', '22ee7a76e736e32f54f5df0a7171538d');
-          console.log('Added missing API key parameter');
+        const params = new URLSearchParams();
+        
+        // For non-encoded URLs, we need to parse the query string manually
+        if (targetURL.includes('&') && !targetURL.includes('%')) {
+          // Get everything after the ? in the original URL
+          const queryString = targetURL.split('?')[1];
+          if (queryString) {
+            // Split by & and create key-value pairs
+            const pairs = queryString.split('&');
+            pairs.forEach(pair => {
+              const [key, value] = pair.split('=');
+              if (key === 'api_key') {
+                params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
+              } else {
+                params.append(key, value);
+              }
+            });
+          }
+        } else {
+          // For encoded URLs, use the parsed params
+          for (const [key, value] of parsedUrl.searchParams) {
+            if (key === 'api_key') {
+              params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
+            } else {
+              params.append(key, value);
+            }
+          }
         }
         
         // Ensure file_type is json
