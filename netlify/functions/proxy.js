@@ -22,35 +22,25 @@ async function handler(event) {
     // Universal URL parsing and encoding
     let urlToFetch;
     try {
-      const parsedUrl = new URL(targetURL);
-      
-      // Get current search params
-      const searchParams = new URLSearchParams(parsedUrl.search);
-      
-      // Special handling for FRED API
-      if (parsedUrl.hostname === 'api.stlouisfed.org') {
-        searchParams.set('file_type', 'json');
-      }
-      
-      // Reconstruct URL with properly encoded parameters
-      const cleanUrl = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}`;
-      urlToFetch = searchParams.toString() 
-        ? `${cleanUrl}?${searchParams.toString()}`
-        : cleanUrl;
+      // For FRED API, handle the URL encoding differently
+      if (targetURL.includes('api.stlouisfed.org')) {
+        const parsedUrl = new URL(targetURL);
+        const params = new URLSearchParams(parsedUrl.search);
+        params.set('file_type', 'json');
         
+        // Ensure we encode the parameters properly
+        urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString().replace(/&/g, '%26')}`;
+      } else {
+        // For other APIs, use the standard URL handling
+        const parsedUrl = new URL(targetURL);
+        urlToFetch = parsedUrl.toString();
+      }
     } catch (urlError) {
       console.error('URL parsing error:', urlError);
-      // If URL parsing fails, try to encode the entire URL
       urlToFetch = encodeURI(targetURL);
     }
 
     console.log('Making request to:', urlToFetch);
-    const initialResponse = await fetch(urlToFetch);
-    console.log('Initial response status:', initialResponse.status);
-    
-    console.log('Waiting for conversion...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
     const response = await fetch(urlToFetch);
     const contentType = response.headers.get('content-type');
     let data = await response.text();
@@ -121,8 +111,6 @@ async function handler(event) {
     try {
       data = JSON.parse(data);
     } catch (jsonError) {
-      // If the response isn't JSON and isn't from a known HTML source, 
-      // it might need different handling
       if (!contentType?.includes('text/html')) {
         console.warn('Non-JSON response from API:', contentType);
       }
