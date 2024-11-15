@@ -27,14 +27,30 @@ async function handler(event) {
         const parsedUrl = new URL(targetURL);
         const params = new URLSearchParams();
         
+        console.log('FRED API URL parsing:');
+        console.log('Original URL:', targetURL);
+        console.log('Search params:', Array.from(parsedUrl.searchParams.entries()));
+        
+        // Check if api_key exists in the raw URL
+        const hasApiKeyInRawUrl = targetURL.includes('api_key=');
+        console.log('Has API key in raw URL:', hasApiKeyInRawUrl);
+        
         // Get all parameters and add them to the new URLSearchParams
         for (const [key, value] of parsedUrl.searchParams) {
+          console.log('Processing parameter:', key, value);
           if (key === 'api_key') {
             // Always use our API key for FRED requests
             params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
+            console.log('Added API key parameter');
           } else {
             params.append(key, value);
           }
+        }
+
+        // If no api_key was found in parameters but exists in raw URL, add it
+        if (!parsedUrl.searchParams.has('api_key') && hasApiKeyInRawUrl) {
+          params.append('api_key', '22ee7a76e736e32f54f5df0a7171538d');
+          console.log('Added missing API key parameter');
         }
         
         // Ensure file_type is json
@@ -42,7 +58,7 @@ async function handler(event) {
         
         // Construct the URL with properly encoded parameters
         urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString()}`;
-        console.log('FRED API URL:', urlToFetch);
+        console.log('Final FRED API URL:', urlToFetch);
       } else {
         // For other APIs, use standard URL handling
         const parsedUrl = new URL(targetURL);
