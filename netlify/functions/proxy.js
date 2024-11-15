@@ -24,10 +24,19 @@ async function handler(event) {
     try {
       // For FRED API, ensure the URL is properly encoded
       if (targetURL.includes('api.stlouisfed.org')) {
-        // First decode the URL in case it's already encoded
-        const decodedUrl = decodeURIComponent(targetURL);
-        // Then encode it properly
-        urlToFetch = encodeURI(decodedUrl);
+        const parsedUrl = new URL(targetURL);
+        const params = new URLSearchParams();
+        
+        // Get all parameters and add them to the new URLSearchParams
+        for (const [key, value] of parsedUrl.searchParams) {
+          params.append(key, value);
+        }
+        
+        // Ensure file_type is json
+        params.set('file_type', 'json');
+        
+        // Construct the URL with properly encoded parameters
+        urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString()}`;
       } else {
         // For other APIs, use standard URL handling
         const parsedUrl = new URL(targetURL);
@@ -39,6 +48,15 @@ async function handler(event) {
     }
 
     console.log('Making request to:', urlToFetch);
+    const initialResponse = await fetch(urlToFetch);
+    console.log('Initial response status:', initialResponse.status);
+    
+    // Wait for the conversion to complete
+    console.log('Waiting for conversion...');
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced to 1 second
+    
+    // Second request to get the converted data
+    console.log('Making second request...');
     const response = await fetch(urlToFetch);
     const contentType = response.headers.get('content-type');
     let data = await response.text();
