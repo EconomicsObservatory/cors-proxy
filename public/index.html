@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,23 +174,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="logo">
-            <img src="https://raw.githubusercontent.com/EconomicsObservatory/ECOvisualisations/main/guidelines/logos/eco-logo-dark.png" 
-                 alt="Economics Observatory" 
-                 height="80"
-                 style="cursor: pointer"
-                 onclick="window.location.href = window.location.pathname">
+            <img src="https://raw.githubusercontent.com/EconomicsObservatory/ECOvisualisations/main/guidelines/logos/eco-logo-dark.png"
+                alt="Economics Observatory" height="80" style="cursor: pointer"
+                onclick="window.location.href = window.location.pathname">
         </div>
 
         <div class="input-box">
             <h2>CORS Proxy URL Converter</h2>
-            <input type="text" 
-                   id="input" 
-                   placeholder="Enter URL to proxy (e.g., https://api.example.com/data)"
-                   autocomplete="off">
-            
+            <input type="text" id="input" placeholder="Enter URL to proxy (e.g., https://api.example.com/data)"
+                autocomplete="off">
+
             <div class="result" id="result">
                 <div class="title" id="urlTitle">Proxied URL:</div>
                 <div class="api-url" id="proxyUrl"></div>
@@ -198,7 +196,9 @@
 
         <div class="tutorial">
             <h3>About</h3>
-            <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs (and it should work for others too, though untested). It enables cross-origin requests for applications that need to access these data sources.</p>
+            <p>This service provides a CORS proxy for accessing the Economics Observatory and ONS APIs (and it should
+                work for others too, though untested). It enables cross-origin requests for applications that need to
+                access these data sources.</p>
         </div>
 
         <div class="tutorial">
@@ -258,7 +258,8 @@
                 <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json</a></code>
             </div>
 
-            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Data provided by CoinDesk's Bitcoin Price Index. Updates every minute with current BTC prices in USD, GBP, and EUR.</p>
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Data provided by CoinDesk's
+                Bitcoin Price Index. Updates every minute with current BTC prices in USD, GBP, and EUR.</p>
 
             <br><br>
             <h4>Coinbase API Examples</h4>
@@ -267,7 +268,9 @@
                 <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.coinbase.com/v2/exchange-rates?currency=USD" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.coinbase.com/v2/exchange-rates?currency=USD</a></code>
             </div>
 
-            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Returns current exchange rates for USD against all supported fiat currencies and cryptocurrencies on Coinbase. Updates frequently throughout the day.</p>
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Returns current exchange rates
+                for USD against all supported fiat currencies and cryptocurrencies on Coinbase. Updates frequently
+                throughout the day.</p>
 
             <br><br>
             <h4>FRED API Examples</h4>
@@ -276,15 +279,17 @@
                 <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.stlouisfed.org/fred/series/observations?series_id=GDP&api_key=YOUR_API_KEY&file_type=json" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.stlouisfed.org/fred/series/observations?series_id=GDP&api_key=YOUR_API_KEY&file_type=json</a></code>
             </div>
 
-            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Replace YOUR_API_KEY with your actual FRED API key. The proxy handles URL encoding automatically!</p>
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Replace YOUR_API_KEY with your
+                actual FRED API key. The proxy handles URL encoding automatically!</p>
         </div>
 
         <div class="tutorial">
             <h3>Vega-Lite Chart Examples</h3>
-            
+
             <h4>Bitcoin Price Example:</h4>
             <div id="bitcoin-vis" style="width: 100%; margin: 20px 0;"></div>
-            <pre class="vega-spec" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
+            <pre class="vega-spec"
+                style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "data": {
     "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
@@ -301,7 +306,8 @@
 
             <h4>US GDP Example:</h4>
             <div id="gdp-vis" style="width: 100%; margin: 20px 0;"></div>
-            <pre class="vega-spec" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
+            <pre class="vega-spec"
+                style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "US GDP Over Time",
   "width": "container",
@@ -330,9 +336,10 @@
     }
   }
 }</pre>
-            <p>You can use these specifications in the <a href="https://vega.github.io/editor/" target="_blank">Vega Editor</a>. Note that:</p>
+            <p>You can use these specifications in the <a href="https://vega.github.io/editor/" target="_blank">Vega
+                    Editor</a>. Note that:</p>
             <ul>
-                <li>For the FRED example, replace REPLACE_WITH_YOUR_API_KEY with your actual FRED API key</li>
+                <li>For the FRED example, replace YOUR_API_KEY with your actual FRED API key</li>
                 <li>The CORS proxy is required to fetch data from both APIs</li>
                 <li>The data property path extracts the relevant data from each API response</li>
             </ul>
@@ -350,7 +357,10 @@
 
         <div class="tutorial">
             <h3>Response Format</h3>
-            <p>The proxy returns JSON responses with appropriate CORS headers. For <a href="https://economicsobservatory.github.io/api/ons.html">Economics Observatory API Converter</a> responses, the proxy will try extract and parse the JSON data from the HTML response, and fall back onto proxying the ONS beta API as a a backup.</p>
+            <p>The proxy returns JSON responses with appropriate CORS headers. For <a
+                    href="https://economicsobservatory.github.io/api/ons.html">Economics Observatory API Converter</a>
+                responses, the proxy will try extract and parse the JSON data from the HTML response, and fall back onto
+                proxying the ONS beta API as a a backup.</p>
         </div>
 
         <div class="tutorial">
@@ -364,17 +374,22 @@
         </div>
 
         <footer>
-            <p>Built by <a href="https://www.csaladen.es" target="_blank">Denes</a> for the <a href="https://www.economicsobservatory.com" target="_blank" rel="noopener noreferrer">Economics Observatory</a> | 
-               <a href="https://economicsobservatory.github.io/api/ons.html" target="_blank" rel="noopener noreferrer">ECO ONS API</a> |
-               <a href="https://economicsobservatory.github.io/cors-proxy/" target="_blank" rel="noopener noreferrer">ECO CORS Proxy</a> |
-               <a href="https://github.com/EconomicsObservatory" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+            <p>Built by <a href="https://www.csaladen.es" target="_blank">Denes</a> for the <a
+                    href="https://www.economicsobservatory.com" target="_blank" rel="noopener noreferrer">Economics
+                    Observatory</a> |
+                <a href="https://economicsobservatory.github.io/api/ons.html" target="_blank"
+                    rel="noopener noreferrer">ECO ONS API</a> |
+                <a href="https://economicsobservatory.github.io/cors-proxy/" target="_blank"
+                    rel="noopener noreferrer">ECO CORS Proxy</a> |
+                <a href="https://github.com/EconomicsObservatory" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </p>
         </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-    
+
     <script>
         const input = document.getElementById('input');
         const result = document.getElementById('result');
@@ -385,15 +400,15 @@
                 result.style.display = 'none';
                 return;
             }
-            
+
             try {
                 // Check if it's a valid URL
                 new URL(url);
-                
+
                 // Generate the proxied URL with the full domain and encode the URL parameter
                 const encodedUrl = encodeURIComponent(url);
                 const proxiedUrl = `https://eco-cors-proxy.netlify.app/proxy?url=${encodedUrl}`;
-                
+
                 // Show result
                 result.style.display = 'block';
                 proxyUrl.textContent = proxiedUrl;
@@ -428,10 +443,10 @@
                 try {
                     const content = pre.textContent;
                     // Replace API key with placeholder if it's the GDP example
-                    const cleanedContent = content.includes('api.stlouisfed.org') 
+                    const cleanedContent = content.includes('api.stlouisfed.org')
                         ? content.replace(/22ee7a76e736e32f54f5df0a7171538d/g, 'YOUR_API_KEY')
                         : content;
-                    
+
                     await navigator.clipboard.writeText(cleanedContent);
                     const originalBg = pre.style.background;
                     pre.style.background = 'rgba(54, 183, 180, 0.2)';
@@ -455,9 +470,9 @@
                     "property": "bpi.USD.rate_float"
                 }
             },
-            "mark": {"type":"bar","color":"#36B7B4"},
+            "mark": { "type": "bar", "color": "#36B7B4" },
             "encoding": {
-                "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
+                "y": { "field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)" }
             }
         };
 
@@ -504,14 +519,7 @@
             background: 'transparent'
         }).catch(console.error);
 
-        // Update Bitcoin price every minute
-        setInterval(() => {
-            vegaEmbed('#bitcoin-vis', bitcoinSpec, {
-                theme: 'dark',
-                actions: false,
-                background: 'transparent'
-            }).catch(console.error);
-        }, 60000);
     </script>
 </body>
-</html> 
+
+</html>
