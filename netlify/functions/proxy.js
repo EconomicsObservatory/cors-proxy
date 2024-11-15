@@ -8,7 +8,14 @@ async function handler(event) {
     'Content-Type': 'application/json'
   };
 
-  const targetURL = event.queryStringParameters.url;
+  // Get the complete original URL from the event
+  const fullUrl = event.rawUrl || event.rawQuery || event.path + '?' + Object.entries(event.queryStringParameters)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+
+  // Extract everything after 'url=' as the target URL
+  const match = fullUrl.match(/url=(.*)/);
+  const targetURL = match ? match[1] : event.queryStringParameters.url;
   
   if (!targetURL) {
     return {
@@ -24,50 +31,27 @@ async function handler(event) {
     try {
       // For FRED API, ensure the URL is properly encoded
       if (targetURL.includes('api.stlouisfed.org')) {
-        let parsedUrl;
-        try {
-          // First try parsing as is
-          parsedUrl = new URL(targetURL);
-        } catch (e) {
-          // If parsing fails, try encoding the URL first
-          parsedUrl = new URL(encodeURI(targetURL));
-        }
-
+        // Extract the base URL and query string
+        const [baseUrl, queryString] = targetURL.split('?');
         const params = new URLSearchParams();
         
-        // For non-encoded URLs, we need to parse the query string manually
-        if (targetURL.includes('&') && !targetURL.includes('%')) {
-          // Get everything after the ? in the original URL
-          const queryString = targetURL.split('?')[1];
-          if (queryString) {
-            // Split by & and create key-value pairs
-            const pairs = queryString.split('&');
-            pairs.forEach(pair => {
-              const [key, value] = pair.split('=');
-              if (key === 'api_key') {
-                params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
-              } else {
-                params.append(key, value);
-              }
-            });
-          }
-        } else {
-          // For encoded URLs, use the parsed params
-          for (const [key, value] of parsedUrl.searchParams) {
+        // Parse query string manually
+        if (queryString) {
+          queryString.split('&').forEach(param => {
+            const [key, value] = param.split('=');
             if (key === 'api_key') {
               params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
             } else {
               params.append(key, value);
             }
-          }
+          });
         }
         
         // Ensure file_type is json
         params.set('file_type', 'json');
         
-        // Construct the URL with properly encoded parameters
-        urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString()}`;
-        console.log('Final FRED API URL:', urlToFetch);
+        // Construct the URL
+        urlToFetch = `${baseUrl}?${params.toString()}`;
       } else {
         // For other APIs, use standard URL handling
         const parsedUrl = new URL(targetURL);
