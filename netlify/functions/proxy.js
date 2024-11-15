@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 
 async function handler(event) {
-  // Set CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -20,37 +19,38 @@ async function handler(event) {
   }
 
   try {
-    // Parse and properly encode the URL
+    // Universal URL parsing and encoding
     let urlToFetch;
     try {
       const parsedUrl = new URL(targetURL);
       
+      // Get current search params
+      const searchParams = new URLSearchParams(parsedUrl.search);
+      
       // Special handling for FRED API
       if (parsedUrl.hostname === 'api.stlouisfed.org') {
-        // Ensure file_type is json
-        const searchParams = new URLSearchParams(parsedUrl.search);
         searchParams.set('file_type', 'json');
-        parsedUrl.search = searchParams.toString();
       }
       
-      // Get the properly encoded URL
-      urlToFetch = parsedUrl.toString();
+      // Reconstruct URL with properly encoded parameters
+      const cleanUrl = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}`;
+      urlToFetch = searchParams.toString() 
+        ? `${cleanUrl}?${searchParams.toString()}`
+        : cleanUrl;
+        
     } catch (urlError) {
       console.error('URL parsing error:', urlError);
-      urlToFetch = targetURL; // Fallback to original URL if parsing fails
+      // If URL parsing fails, try to encode the entire URL
+      urlToFetch = encodeURI(targetURL);
     }
 
     console.log('Making request to:', urlToFetch);
-    // First request to initiate the conversion
     const initialResponse = await fetch(urlToFetch);
     console.log('Initial response status:', initialResponse.status);
     
-    // Wait for the conversion to complete
     console.log('Waiting for conversion...');
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced to 1 second
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Second request to get the converted data
-    console.log('Making second request...');
     const response = await fetch(urlToFetch);
     const contentType = response.headers.get('content-type');
     let data = await response.text();
@@ -115,13 +115,16 @@ async function handler(event) {
           })
         };
       }
-    } else {
-      // Try to parse response as JSON
-      try {
-        data = JSON.parse(data);
-      } catch (jsonError) {
-        // If not JSON, leave as is
-        console.log('Response is not JSON, leaving as text');
+    }
+
+    // Try to parse as JSON for all responses
+    try {
+      data = JSON.parse(data);
+    } catch (jsonError) {
+      // If the response isn't JSON and isn't from a known HTML source, 
+      // it might need different handling
+      if (!contentType?.includes('text/html')) {
+        console.warn('Non-JSON response from API:', contentType);
       }
     }
 
