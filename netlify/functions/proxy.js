@@ -22,16 +22,14 @@ async function handler(event) {
     // Universal URL parsing and encoding
     let urlToFetch;
     try {
-      // For FRED API, handle the URL encoding differently
+      // For FRED API, ensure the URL is properly encoded
       if (targetURL.includes('api.stlouisfed.org')) {
-        const parsedUrl = new URL(targetURL);
-        const params = new URLSearchParams(parsedUrl.search);
-        params.set('file_type', 'json');
-        
-        // Ensure we encode the parameters properly
-        urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString().replace(/&/g, '%26')}`;
+        // First decode the URL in case it's already encoded
+        const decodedUrl = decodeURIComponent(targetURL);
+        // Then encode it properly
+        urlToFetch = encodeURI(decodedUrl);
       } else {
-        // For other APIs, use the standard URL handling
+        // For other APIs, use standard URL handling
         const parsedUrl = new URL(targetURL);
         urlToFetch = parsedUrl.toString();
       }
