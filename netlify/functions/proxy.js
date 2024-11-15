@@ -29,8 +29,8 @@ async function handler(event) {
         
         // Get all parameters and add them to the new URLSearchParams
         for (const [key, value] of parsedUrl.searchParams) {
-          // Replace placeholder with actual API key if present
-          if (key === 'api_key' && value === 'YOUR_API_KEY') {
+          if (key === 'api_key') {
+            // Always use our API key for FRED requests
             params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
           } else {
             params.append(key, value);
@@ -42,6 +42,7 @@ async function handler(event) {
         
         // Construct the URL with properly encoded parameters
         urlToFetch = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}?${params.toString()}`;
+        console.log('FRED API URL:', urlToFetch);
       } else {
         // For other APIs, use standard URL handling
         const parsedUrl = new URL(targetURL);
