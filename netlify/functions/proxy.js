@@ -9,13 +9,13 @@ async function handler(event) {
   };
 
   // Get the complete original URL from the event
-  const fullUrl = event.rawUrl || event.rawQuery || event.path + '?' + Object.entries(event.queryStringParameters)
+  const fullUrl = event.rawUrl || event.rawQuery || event.path + '?' + Object.entries(event.queryStringParameters || {})
     .map(([key, value]) => `${key}=${value}`)
     .join('&');
 
   // Extract everything after 'url=' as the target URL
   const match = fullUrl.match(/url=(.*)/);
-  const targetURL = match ? match[1] : event.queryStringParameters.url;
+  const targetURL = match ? decodeURIComponent(match[1]) : event.queryStringParameters?.url;
   
   if (!targetURL) {
     return {
@@ -29,34 +29,30 @@ async function handler(event) {
     // Universal URL parsing and encoding
     let urlToFetch;
     try {
-      // For FRED API, ensure the URL is properly encoded
-      if (targetURL.includes('api.stlouisfed.org')) {
-        // Extract the base URL and query string
-        const [baseUrl, queryString] = targetURL.split('?');
-        const params = new URLSearchParams();
-        
-        // Parse query string manually
-        if (queryString) {
-          queryString.split('&').forEach(param => {
-            const [key, value] = param.split('=');
-            if (key === 'api_key') {
-              params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
-            } else {
-              params.append(key, value);
-            }
-          });
-        }
-        
-        // Ensure file_type is json
-        params.set('file_type', 'json');
-        
-        // Construct the URL
-        urlToFetch = `${baseUrl}?${params.toString()}`;
-      } else {
-        // For other APIs, use standard URL handling
-        const parsedUrl = new URL(targetURL);
-        urlToFetch = parsedUrl.toString();
+      // Extract the base URL and query string
+      const [baseUrl, queryString] = targetURL.split('?');
+      const params = new URLSearchParams();
+      
+      // Parse query string manually
+      if (queryString) {
+        queryString.split('&').forEach(param => {
+          const [key, value] = param.split('=');
+          if (targetURL.includes('api.stlouisfed.org') && key === 'api_key') {
+            params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
+          } else {
+            params.append(key, value);
+          }
+        });
       }
+      
+      // For FRED API, ensure file_type is json
+      if (targetURL.includes('api.stlouisfed.org')) {
+        params.set('file_type', 'json');
+      }
+      
+      // Construct the URL
+      urlToFetch = `${baseUrl}?${params.toString()}`;
+      
     } catch (urlError) {
       console.error('URL parsing error:', urlError);
       urlToFetch = encodeURI(targetURL);
