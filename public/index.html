@@ -268,13 +268,28 @@
             </div>
 
             <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Returns current exchange rates for USD against all supported fiat currencies and cryptocurrencies on Coinbase. Updates frequently throughout the day.</p>
+
+            <br><br>
+            <h4>FRED API Examples</h4>
+            <div class="example-box">
+                <h5>US GDP (Quarterly) - Raw URL:</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https://api.stlouisfed.org/fred/series/observations?series_id=GDP&api_key=YOUR_API_KEY&file_type=json" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https://api.stlouisfed.org/fred/series/observations?series_id=GDP&api_key=YOUR_API_KEY&file_type=json</a></code>
+            </div>
+
+            <div class="example-box">
+                <h5>US GDP (Quarterly) - URL Encoded:</h5>
+                <code><a href="https://eco-cors-proxy.netlify.app/proxy?url=https%3A%2F%2Fapi.stlouisfed.org%2Ffred%2Fseries%2Fobservations%3Fseries_id%3DGDP%26api_key%3DYOUR_API_KEY%26file_type%3Djson" target="_blank" rel="noopener noreferrer">https://eco-cors-proxy.netlify.app/proxy?url=https%3A%2F%2Fapi.stlouisfed.org%2Ffred%2Fseries%2Fobservations%3Fseries_id%3DGDP%26api_key%3DYOUR_API_KEY%26file_type%3Djson</a></code>
+            </div>
+
+            <p style="color: var(--eco-gray); font-size: 0.9em; margin-top: 10px;">Note: Replace YOUR_API_KEY with your actual FRED API key. Both raw and encoded URLs work - our proxy handles the encoding automatically!</p>
         </div>
 
         <div class="tutorial">
-            <h3>Vega-Lite Chart Example</h3>
-            <p>Here's an example of how to create a Vega chart using the CoinDesk API with our CORS proxy:</p>
-            <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;" onclick="copyToClipboard(this)">
-{
+            <h3>Vega-Lite Chart Examples</h3>
+            
+            <h4>Bitcoin Price Example:</h4>
+            <div id="bitcoin-vis" style="width: 100%; margin: 20px 0;"></div>
+            <pre class="vega-spec" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "data": {
     "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
@@ -288,65 +303,44 @@
     "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
   }
 }</pre>
-            <p>You can use this specification in the <a href="https://vega.github.io/editor/" target="_blank">Vega Editor</a>. Note that:</p>
+
+            <h4>US GDP Example:</h4>
+            <div id="gdp-vis" style="width: 100%; margin: 20px 0;"></div>
+            <pre class="vega-spec" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; cursor: pointer;">{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "US GDP Over Time",
+  "width": "container",
+  "height": 300,
+  "data": {
+    "url": "https://eco-cors-proxy.netlify.app/proxy?url=https%3A%2F%2Fapi.stlouisfed.org%2Ffred%2Fseries%2Fobservations%3Fseries_id%3DGDP%26api_key%3D22ee7a76e736e32f54f5df0a7171538d%26file_type%3Djson",
+    "format": {
+      "type": "json",
+      "property": "observations"
+    }
+  },
+  "mark": {
+    "type": "line",
+    "color": "#36B7B4"
+  },
+  "encoding": {
+    "x": {
+      "field": "date",
+      "type": "temporal",
+      "title": "Date"
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "title": "GDP (Billions of Dollars)"
+    }
+  }
+}</pre>
+            <p>You can use these specifications in the <a href="https://vega.github.io/editor/" target="_blank">Vega Editor</a>. Note that:</p>
             <ul>
-                <li>The CORS proxy is required to fetch data from the API</li>
-                <li>The data property path extracts just the USD price</li>
-                <li>The chart updates in real-time as Bitcoin prices change</li>
+                <li>For the FRED example, replace REPLACE_WITH_YOUR_API_KEY with your actual FRED API key</li>
+                <li>The CORS proxy is required to fetch data from both APIs</li>
+                <li>The data property path extracts the relevant data from each API response</li>
             </ul>
-
-            <h4>Live Example (Current Bitcoin Price in USD):</h4>
-            <div id="vis"></div>
-            <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-            <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-            <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-            <script>
-                // Add copy-to-clipboard functionality
-                function copyToClipboard(element) {
-                    // The actual spec to copy (with unbroken URL)
-                    const spec = {
-                        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-                        "data": {
-                            "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
-                            "format": {
-                                "type": "json",
-                                "property": "bpi.USD.rate_float"
-                            }
-                        },
-                        "mark": "bar",
-                        "encoding": {
-                            "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
-                        }
-                    };
-
-                    // Copy the stringified spec to clipboard
-                    navigator.clipboard.writeText(JSON.stringify(spec, null, 2))
-                        .then(() => {
-                            // Visual feedback
-                            element.style.backgroundColor = "rgba(54, 183, 180, 0.1)"; // Subtle flash of turquoise
-                            setTimeout(() => {
-                                element.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
-                            }, 200);
-                        });
-                }
-
-                // Render the chart
-                const spec = {
-                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-                    "data": {
-                        "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
-                        "format": {
-                            "type": "json",
-                            "property": "bpi.USD.rate_float"
-                        }
-                    },
-                    "mark": {"type":"bar", "color":"#36B7B4"},
-                    "encoding": {
-                        "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
-                    }
-                };
-                vegaEmbed('#vis', spec);
-            </script>
         </div>
 
         <div class="tutorial">
@@ -382,6 +376,10 @@
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    
     <script>
         const input = document.getElementById('input');
         const result = document.getElementById('result');
@@ -397,8 +395,9 @@
                 // Check if it's a valid URL
                 new URL(url);
                 
-                // Generate the proxied URL with the full domain
-                const proxiedUrl = `https://eco-cors-proxy.netlify.app/proxy?url=${url}`;
+                // Generate the proxied URL with the full domain and encode the URL parameter
+                const encodedUrl = encodeURIComponent(url);
+                const proxiedUrl = `https://eco-cors-proxy.netlify.app/proxy?url=${encodedUrl}`;
                 
                 // Show result
                 result.style.display = 'block';
@@ -427,6 +426,97 @@
                 console.error('Failed to copy:', err);
             }
         });
+
+        // Add copy functionality for Vega specs
+        document.querySelectorAll('.vega-spec').forEach(pre => {
+            pre.addEventListener('click', async () => {
+                try {
+                    const content = pre.textContent;
+                    // Replace API key with placeholder if it's the GDP example
+                    const cleanedContent = content.includes('api.stlouisfed.org') 
+                        ? content.replace(/22ee7a76e736e32f54f5df0a7171538d/g, 'YOUR_API_KEY')
+                        : content;
+                    
+                    await navigator.clipboard.writeText(cleanedContent);
+                    const originalBg = pre.style.background;
+                    pre.style.background = 'rgba(54, 183, 180, 0.2)';
+                    setTimeout(() => {
+                        pre.style.background = originalBg;
+                    }, 200);
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                }
+            });
+        });
+
+        // Render Bitcoin visualization
+        const bitcoinSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "background": "transparent",
+            "data": {
+                "url": "https://eco-cors-proxy.netlify.app/proxy?url=https://api.coindesk.com/v1/bpi/currentprice.json",
+                "format": {
+                    "type": "json",
+                    "property": "bpi.USD.rate_float"
+                }
+            },
+            "mark": {"type":"bar","color":"#36B7B4"},
+            "encoding": {
+                "y": {"field": "data", "type": "quantitative", "title": "Bitcoin Price (USD)"}
+            }
+        };
+
+        // Render GDP visualization with API key (but keep it hidden in examples)
+        const gdpSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": "US GDP Over Time",
+            "background": "transparent",
+            "data": {
+                "url": "https://eco-cors-proxy.netlify.app/proxy?url=https%3A%2F%2Fapi.stlouisfed.org%2Ffred%2Fseries%2Fobservations%3Fseries_id%3DGDP%26api_key%3D22ee7a76e736e32f54f5df0a7171538d%26file_type%3Djson",
+                "format": {
+                    "type": "json",
+                    "property": "observations"
+                }
+            },
+            "mark": {
+                "type": "line",
+                "color": "#36B7B4"
+            },
+            "encoding": {
+                "x": {
+                    "field": "date",
+                    "type": "temporal",
+                    "title": "Date"
+                },
+                "y": {
+                    "field": "value",
+                    "type": "quantitative",
+                    "title": "GDP (Billions of Dollars)"
+                }
+            }
+        };
+
+        // Embed the visualizations
+        vegaEmbed('#bitcoin-vis', bitcoinSpec, {
+            theme: 'dark',
+            actions: false,
+            background: 'transparent'
+        }).catch(console.error);
+
+        vegaEmbed('#gdp-vis', gdpSpec, {
+            theme: 'dark',
+            actions: false,
+            background: 'transparent'
+        }).catch(console.error);
+
+        // Update Bitcoin price every minute
+        setInterval(() => {
+            vegaEmbed('#bitcoin-vis', bitcoinSpec, {
+                theme: 'dark',
+                actions: false,
+                background: 'transparent'
+            }).catch(console.error);
+        }, 60000);
     </script>
 </body>
 </html> 
