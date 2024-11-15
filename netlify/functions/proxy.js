@@ -29,7 +29,12 @@ async function handler(event) {
         
         // Get all parameters and add them to the new URLSearchParams
         for (const [key, value] of parsedUrl.searchParams) {
-          params.append(key, value);
+          // Replace placeholder with actual API key if present
+          if (key === 'api_key' && value === 'YOUR_API_KEY') {
+            params.append(key, '22ee7a76e736e32f54f5df0a7171538d');
+          } else {
+            params.append(key, value);
+          }
         }
         
         // Ensure file_type is json
